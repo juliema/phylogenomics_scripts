@@ -1,17 +1,12 @@
 #!/usr/bin/env perl
 
-
-### need to fix issue with $len... and check the results
-
-
 ##################################################################
 #      Ths script will read through atram output or any assemblies files end in ".fasta" and find
 #        the longest contig, make a new file and print
 #        out only the longest contig. This is ideal for UCEs
 #        new file --> longest.fasta   
 #
-#     DOES NOT DEAL WITH INTERLEAVED... RIGHT NOW
-#     MAY NOT BE GREAT FOR HUGE FILES
+#     DOES NOT DEAL WITH INTERLEAVED.
 #
 #     usage   perl getlongestcontig.pl
 #
@@ -39,13 +34,13 @@ while (<FH>) {
 			else {
 				$seq=$_;
 				chomp $seq;
-			}
-			if (exists $contighash{$contig}) {
-				print "Warning this contig name is found more than once $contig\n";
-				print "you might not get the right contig printed out\n";
-			}
-			else {
-				$contighash{$contig}=$seq;
+				if (exists $contighash{$contig}) {
+					print "Warning this contig name is found more than once $contig\n";
+					print "you might not get the right contig printed out\n";
+				}	
+				else {
+					$contighash{$contig}=$seq;
+				}
 			}
 		}
 		my $length=0;
@@ -54,9 +49,13 @@ while (<FH>) {
 		foreach $contig (keys %contighash) {
 			 my $seq = $contighash{$contig};
 			 $len= length($seq);
+			 #print "$contig\t$len\n";
+			 #print "$len and $length\n";
 			 if ($len > $length) {
 				%keep=();
 				$keep{$contig}=$seq;
+				#print "$len is > $length keeping $contig\n";
+				$length = $len;
 			}
 		}
 		foreach $contig (keys %keep) {
